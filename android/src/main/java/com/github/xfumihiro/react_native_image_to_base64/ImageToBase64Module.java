@@ -11,6 +11,7 @@ import java.util.Map;
 import java.io.ByteArrayOutputStream;
 
 import android.content.Context;
+import android.content.res.AssetFileDescriptor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Base64;
@@ -35,7 +36,13 @@ public class ImageToBase64Module extends ReactContextBaseJavaModule {
   @ReactMethod
   public void getBase64String(String uri, Callback callback) {
     try {
-      Bitmap image = MediaStore.Images.Media.getBitmap(this.context.getContentResolver(), Uri.parse(uri));
+      BitmapFactory.Options options = new BitmapFactory.Options();
+      options.inSampleSize = 5;
+
+      AssetFileDescriptor fileDescriptor = null;
+      fileDescriptor = this.context.getContentResolver().openAssetFileDescriptor(Uri.parse(uri), "r");
+      Bitmap image = BitmapFactory.decodeFileDescriptor(fileDescriptor.getFileDescriptor(), null, options);
+
       if (image == null) {
         callback.invoke("Failed to decode Bitmap, uri: " + uri);
       } else {
