@@ -34,10 +34,10 @@ public class ImageToBase64Module extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void getBase64String(String uri, Callback callback) {
+  public void getBase64String(String uri, Callback callback, Integer inSampleSize) {
     try {
       BitmapFactory.Options options = new BitmapFactory.Options();
-      options.inSampleSize = 5;
+      options.inSampleSize = inSampleSize;
 
       AssetFileDescriptor fileDescriptor = null;
       fileDescriptor = this.context.getContentResolver().openAssetFileDescriptor(Uri.parse(uri), "r");
