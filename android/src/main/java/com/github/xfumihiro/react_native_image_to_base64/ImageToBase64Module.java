@@ -34,7 +34,7 @@ public class ImageToBase64Module extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void getBase64String(String uri, Callback callback, Integer inSampleSize) {
+  public void getBase64String(String uri, Integer inSampleSize, Callback callback) {
     try {
       BitmapFactory.Options options = new BitmapFactory.Options();
       options.inSampleSize = inSampleSize;
