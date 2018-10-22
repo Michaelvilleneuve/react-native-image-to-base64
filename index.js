@@ -1,11 +1,14 @@
-import { NativeModules } from 'react-native';
+import { NativeModules, Platform } from 'react-native';
 
 const RNImageToBase64 = NativeModules.RNImageToBase64;
 
 const ImageToBase64 = {};
 
-ImageToBase64.getBase64String = (uri, callback) => {
-  return RNImageToBase64.getBase64String(uri, callback);
+ImageToBase64.getBase64String = (uri, inSampleSize = 5) => {
+  if (Platform.OS === "android") {
+    return RNImageToBase64.getBase64String(uri, inSampleSize);
+  }
+  return RNImageToBase64.getBase64String(uri);
 }
 
 ImageToBase64.bitmapToBase64 = (bitmap) => {
