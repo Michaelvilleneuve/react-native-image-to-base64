@@ -5,6 +5,7 @@ import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
+import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.Callback;
 
 import java.util.Map;
@@ -34,7 +35,7 @@ public class ImageToBase64Module extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void getBase64String(String uri, Integer inSampleSize, Callback callback) {
+  public void getBase64String(String uri, Integer inSampleSize, final Promise promise) {
     try {
       BitmapFactory.Options options = new BitmapFactory.Options();
       options.inSampleSize = inSampleSize;
@@ -44,11 +45,12 @@ public class ImageToBase64Module extends ReactContextBaseJavaModule {
       Bitmap image = BitmapFactory.decodeFileDescriptor(fileDescriptor.getFileDescriptor(), null, options);
 
       if (image == null) {
-        callback.invoke("Failed to decode Bitmap, uri: " + uri);
+        promise.reject("EUNSPECIFIED", "Failed to decode Bitmap, uri: " + uri);
       } else {
-        callback.invoke(null, bitmapToBase64(image));
+        promise.resolve(bitmapToBase64(image));
       }
     } catch (IOException e) {
+      promise.reject("EUNSPECIFIED", "Error");
     }
   }
 

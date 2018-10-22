@@ -15,25 +15,24 @@
 
 RCT_EXPORT_MODULE();
 
-RCT_EXPORT_METHOD(getBase64String:(NSString *)input callback:(RCTResponseSenderBlock)callback)
+RCT_EXPORT_METHOD(getBase64String:(NSString *)input resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
 {
     @try {
         NSURL *url = [NSURL fileURLWithPath:input];
         NSError *err = nil;
         NSData *imageData = [NSData dataWithContentsOfURL:url options: NSDataReadingUncached error: &err];
         if (err != nil) {
-            callback(@[@"Not found image"]);
-            return;
+            return reject(@"ENOENT", [NSString stringWithFormat:@"No such file '%@'", input], nil);
         }
         UIImage *image = [UIImage imageWithData: imageData];
         UIImage *portraitImage = [image normalizedImage];
         NSData *imgData = UIImageJPEGRepresentation(portraitImage, 1.0);
         NSString *base64 = [imgData base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength];
-        callback(@[[NSNull null], base64]);
+        return resolve(base64);
     }
-    @catch (NSException *exception) {
-        NSLog(@"%@", exception.reason);
-        callback(@[exception.reason]);
+    @catch (NSException *e) {
+        NSLog(@"%@", e.reason);
+        return reject(@"EUNSPECIFIED", [e reason], nil);
     }
 }
 
